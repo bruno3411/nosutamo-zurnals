@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nosūtāmo ziņojumu žurnāls</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; }
+
+body {
+  font-family: "Tahoma", "Segoe UI", Arial, sans-serif;
+  -webkit-font-smoothing: none;
+  font-size: 11px;
+  background: #f5f5f5;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.win {
+  width: 962px;
+  background: #ccd4d2;
+  border: 1px solid #8aacaa;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* TITLE BAR — right side text removed */
+.tbar {
+  background: #1c4c5c;
+  color: #bcd8e4;
+  padding: 3px 8px 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 1.4;
+}
+.tbar-tri {
+  width: 0; height: 0;
+  border-top:    5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left:   7px solid #bcd8e4;
+  flex-shrink: 0;
+}
+
+.body { padding: 6px 7px 8px 7px; width: 100%; }
+
+/* GRID */
+.grid-wrap {
+  display: flex;
+  width: 100%;
+  border: 1px solid #8aacaa;
+  border-radius: 3px;
+  margin-bottom: 7px;
+  background: #ccd4d2;
+  overflow: hidden;
+}
+.grid-area { flex: 1; min-width: 0; overflow: hidden; }
+
+table.g {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 2px;
+  table-layout: fixed;
+  font-size: 10.5px;
+  font-family: inherit;
+}
+
+table.g th {
+  background: #ccd4d2;
+  border: none;
+  padding: 2px 3px 2px 3px;
+  font-weight: bold;
+  color: #1a1c1b;
+  text-align: left;
+  font-size: 10.5px;
+  line-height: 1.3;
+  vertical-align: bottom;
+  white-space: normal;
+}
+table.g th.th-ic { padding: 0; }
+
+/* ALL GREY cells */
+table.g td {
+  background: #e8ecea;
+  border: 1px solid #7eaeac;
+  border-radius: 3px;
+  height: 22px;
+  padding: 0 4px;
+  vertical-align: middle;
+  font-size: 10.5px;
+  cursor: pointer;
+  transition: background 0.08s, border-color 0.08s;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+}
+
+/* Hover */
+table.g tr:hover td {
+  background: #dde8e7;
+  border-color: #5a9896;
+}
+
+/* Selected row */
+table.g tr.row-sel td {
+  background: #c6e2e0;
+  border-color: #4a8a88;
+  box-shadow: inset 0 1px 2px rgba(0,60,60,0.1);
+}
+table.g tr.row-sel:hover td {
+  background: #badede;
+  border-color: #3a7a78;
+}
+
+table.g td.td-ic {
+  padding: 2px 3px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* ICON BUTTON */
+.icbtn {
+  background: linear-gradient(180deg, #46568e 0%, #2e3f6e 100%);
+  border: 1px solid;
+  border-color: #6070a8 #182040 #182040 #6070a8;
+  border-radius: 2px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+  transition: opacity 0.1s;
+}
+.icbtn:hover { opacity: 0.85; }
+.icbtn:active {
+  border-color: #182040 #6070a8 #6070a8 #182040;
+  opacity: 1;
+}
+
+/* SCROLLBAR */
+.vsb {
+  width: 16px;
+  background: #a6b6b4;
+  border-left: 1px solid #7eaeac;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1px;
+  flex-shrink: 0;
+}
+.sb-arr {
+  width: 14px; height: 14px;
+  background: #c8cecc;
+  border: 1px solid;
+  border-color: #dce0de #8c9290 #8c9290 #dce0de;
+  border-radius: 2px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 6px; color: #3a3c3b;
+  cursor: pointer; flex-shrink: 0; user-select: none;
+  transition: background 0.1s;
+}
+.sb-arr:hover { background: #d4d8d6; }
+.sb-track {
+  flex: 1; width: 12px;
+  background: #94acaa;
+  border: 1px solid #6e9e9c;
+  margin: 1px 0; position: relative;
+  background-image: radial-gradient(circle, #a8bcba 1px, transparent 1px);
+  background-size: 3px 3px;
+}
+.sb-thumb {
+  position: absolute;
+  bottom: 1px; left: 1px; right: 1px; height: 22px;
+  background: #c8cecc;
+  border: 1px solid;
+  border-color: #dce0de #8c9290 #8c9290 #dce0de;
+  background-image: none;
+  cursor: ns-resize;
+}
+
+/* FIELDSETS */
+.fs {
+  border: 1px solid #80aeac;
+  border-radius: 2px;
+  padding: 8px 7px 6px 7px;
+  position: relative;
+  margin-bottom: 5px;
+  width: 100%;
+}
+.fs-legend {
+  position: absolute;
+  top: -7px; left: 9px;
+  background: #ccd4d2;
+  padding: 0 3px;
+  font-size: 11px;
+  font-weight: bold;
+  font-style: italic;
+  color: #1a1c1b;
+  line-height: 1;
+  white-space: nowrap;
+}
+.frow { display: flex; align-items: center; gap: 3px; width: 100%; }
+
+/* INPUTS — same as cells, not editable */
+.inp {
+  height: 22px;
+  border: 1px solid #7eaeac;
+  background: #e8ecea;
+  padding: 0 4px;
+  font-size: 11px;
+  font-family: inherit;
+  color: #1a1c1b;
+  border-radius: 3px;
+  outline: none;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+  cursor: default;
+  pointer-events: none;
+}
+.inp-flex { flex: 1; min-width: 0; }
+
+.lbl { font-size: 11px; color: #1a1c1b; white-space: nowrap; flex-shrink: 0; }
+
+/* DOC TYPE ROW */
+.dtrow { display: flex; align-items: center; gap: 3px; margin-bottom: 4px; width: 100%; }
+
+/* BUTTONS */
+.btn-on {
+  height: 22px;
+  background: #c4c8c6;
+  border: 2px solid;
+  border-color: #e2e6e4 #8c9290 #8c9290 #e2e6e4;
+  box-shadow: inset 1px 1px 0 #eef2f0;
+  font-size: 11px; font-weight: bold;
+  font-family: inherit; color: #1a1c1b;
+  border-radius: 3px; padding: 0 14px;
+  cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  transition: background 0.1s;
+}
+.btn-on:hover { background: #cacece; }
+.btn-on:active { border-color: #8c9290 #e2e6e4 #e2e6e4 #8c9290; box-shadow: none; }
+
+.btn-off {
+  height: 22px;
+  background: #c0c4c2;
+  border: 2px solid #b2b6b4;
+  font-size: 11px; font-weight: normal;
+  font-family: inherit; color: #929890;
+  border-radius: 3px; padding: 0 14px;
+  cursor: default; white-space: nowrap;
+  text-shadow: 1px 1px 0 #eef0ef; flex-shrink: 0;
+}
+
+/* TEXTAREA — same as cells, not editable */
+.ta {
+  width: 100%; height: 70px;
+  border: 1px solid #7eaeac;
+  background: #e8ecea;
+  resize: none;
+  font-size: 11px; font-family: inherit;
+  color: #1a1c1b;
+  padding: 3px 4px; outline: none; display: block;
+  border-radius: 3px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+  cursor: default;
+  pointer-events: none;
+}
+
+.sec-lbl { font-size: 11px; font-weight: bold; color: #1a1c1b; margin-bottom: 2px; }
+.btns { display: flex; gap: 4px; margin-top: 7px; }
+</style>
+</head>
+<body>
+
+<div class="win">
+
+  <!-- TITLE BAR — no right-side text -->
+  <div class="tbar">
+    <div class="tbar-tri"></div>
+    <span>Nosūtāmo ziņojumu žurnāls</span>
+  </div>
+
+  <div class="body">
+
+    <!-- GRID -->
+    <div class="grid-wrap">
+      <div class="grid-area">
+        <table class="g" id="main-table">
+          <colgroup>
+            <col><col><col><col><col><col><col><col><col>
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Ziņojuma<br>datums, laiks</th>
+              <th>Nosūtīšanas<br>veids</th>
+              <th>Kontaktinformācija</th>
+              <th class="th-ic"></th>
+              <th>E-Iesnieguma<br>reģ. Nr.</th>
+              <th>Saņemtā dok.<br>reģ. Nr. SAIS</th>
+              <th>Nosūtāmā dok.<br>reģ. Nr. SAIS</th>
+              <th>Ziņojuma<br>statuss</th>
+              <th>Lietotājs</th>
+            </tr>
+          </thead>
+          <tbody id="gb"></tbody>
+        </table>
+      </div>
+      <div class="vsb">
+        <div class="sb-arr">&#9650;</div>
+        <div class="sb-track"><div class="sb-thumb"></div></div>
+        <div class="sb-arr">&#9660;</div>
+      </div>
+    </div>
+
+    <!-- PERSONA -->
+    <div class="fs">
+      <span class="fs-legend">Persona, kurai nosūtīts ziņojums</span>
+      <div class="frow">
+        <span class="lbl">Personas kods</span>
+        <input type="text" readonly class="inp" style="width:118px">
+        <span class="lbl">Vārds(i)</span>
+        <input type="text" readonly class="inp" style="width:205px">
+        <span class="lbl">Uzvārds</span>
+        <input type="text" class="inp inp-flex">
+      </div>
+    </div>
+
+    <!-- ORGANIZĀCIJA -->
+    <div class="fs">
+      <span class="fs-legend">Organizācija, kurai nosūtīts ziņojums</span>
+      <div class="frow">
+        <span class="lbl">NMR kods</span>
+        <input type="text" readonly class="inp" style="width:103px">
+        <span class="lbl">Saņēmējorganizācija</span>
+        <input type="text" class="inp inp-flex">
+      </div>
+    </div>
+
+    <!-- DOKUMENTA TIPS -->
+    <div class="dtrow">
+      <span class="lbl">Dokumenta tips</span>
+      <input type="text" class="inp inp-flex">
+      <button class="icbtn" style="width:22px;height:20px;" title="Izvēlēties">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <rect x="1.5" y="9" width="10" height="2.2" rx="0.4" fill="#c4d4ee"/>
+          <polygon points="6.5,1.5 9.4,6 7.5,6 7.5,8.2 5.5,8.2 5.5,6 3.6,6" fill="#c4d4ee"/>
+        </svg>
+      </button>
+      <button class="btn-off">Apskatīt iesniegumu</button>
+    </div>
+
+    <!-- TEXTAREA -->
+    <div class="sec-lbl">Ziņojuma teksts</div>
+    <textarea readonly class="ta" placeholder="Ievadiet ziņojuma tekstu..."></textarea>
+
+    <!-- BOTTOM BUTTONS -->
+    <div class="btns">
+      <button class="btn-off">Sūtīt atkārtoti</button>
+      <button class="btn-on">Atskaites</button>
+      <button class="btn-off">Atcelt ziņojuma sūtīšanu</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function () {
+  /* Column widths */
+  const widths = [97, 79, 134, 28, 88, 102, 106, 79, null];
+  const cols = document.querySelectorAll('table.g colgroup col');
+  widths.forEach((w, i) => { if (cols[i] && w) cols[i].style.width = w + 'px'; });
+
+  /* Icon SVG */
+  const icon =
+    '<svg width="11" height="11" viewBox="0 0 13 13" fill="none">' +
+    '<rect x="1.5" y="9" width="10" height="2.2" rx="0.4" fill="#c4d4ee"/>' +
+    '<polygon points="6.5,1.5 9.4,6 7.5,6 7.5,8.2 5.5,8.2 5.5,6 3.6,6" fill="#c4d4ee"/>' +
+    '</svg>';
+
+  /* Build rows */
+  const gb = document.getElementById('gb');
+  for (let r = 0; r < 11; r++) {
+    const tr = document.createElement('tr');
+    if (r === 0) tr.className = 'row-sel';
+    let html = '';
+    for (let c = 0; c < 9; c++) {
+      if (c === 3) {
+        html += '<td class="td-ic"><button class="icbtn" style="width:22px;height:18px;" title="Lejupielādēt">' + icon + '</button></td>';
+      } else {
+        html += '<td></td>';
+      }
+    }
+    tr.innerHTML = html;
+    gb.appendChild(tr);
+  }
+
+  /* Row click selection */
+  gb.addEventListener('click', function (e) {
+    const tr = e.target.closest('tr');
+    if (!tr) return;
+    document.querySelectorAll('#gb tr').forEach(r => r.classList.remove('row-sel'));
+    tr.classList.add('row-sel');
+  });
+
+  /* Scrollbar thumb drag */
+  const thumb = document.querySelector('.sb-thumb');
+  const track = document.querySelector('.sb-track');
+  let dragging = false, startY = 0, startTop = 0;
+
+  thumb.addEventListener('mousedown', function (e) {
+    dragging = true;
+    startY = e.clientY;
+    startTop = thumb.offsetTop;
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', function (e) {
+    if (!dragging) return;
+    const maxTop = track.clientHeight - thumb.offsetHeight - 2;
+    let newTop = Math.min(Math.max(0, startTop + (e.clientY - startY)), maxTop);
+    thumb.style.bottom = 'auto';
+    thumb.style.top = newTop + 'px';
+  });
+  document.addEventListener('mouseup', function () { dragging = false; });
+
+  /* Arrow buttons */
+  const arrows = document.querySelectorAll('.sb-arr');
+  arrows[0].addEventListener('click', function () {
+    const cur = thumb.style.top === '' ? track.clientHeight - thumb.offsetHeight - 2 : parseInt(thumb.style.top) || 0;
+    thumb.style.bottom = 'auto';
+    thumb.style.top = Math.max(0, cur - 10) + 'px';
+  });
+  arrows[1].addEventListener('click', function () {
+    const cur = thumb.style.top === '' ? track.clientHeight - thumb.offsetHeight - 2 : parseInt(thumb.style.top) || 0;
+    const max = track.clientHeight - thumb.offsetHeight - 2;
+    thumb.style.bottom = 'auto';
+    thumb.style.top = Math.min(max, cur + 10) + 'px';
+  });
+})();
+</script>
+</body>
+</html>
