@@ -291,7 +291,7 @@ table.g td.td-ic {
       <div class="grid-area">
         <table class="g" id="main-table">
           <colgroup>
-            <col><col><col><col><col><col><col><col><col>
+            <col><col><col><col><col><col><col><col><col><col>
           </colgroup>
           <thead>
             <tr>
@@ -303,6 +303,7 @@ table.g td.td-ic {
               <th>Saņemtā dok.<br>reģ. Nr. SAIS</th>
               <th>Nosūtāmā dok.<br>reģ. Nr. SAIS</th>
               <th>Ziņojuma<br>statuss</th>
+              <th>Apstiprināts<br>e-pasts</th>
               <th>Lietotājs</th>
             </tr>
           </thead>
@@ -340,17 +341,36 @@ table.g td.td-ic {
       </div>
     </div>
 
-    <!-- DOKUMENTA TIPS -->
-    <div class="dtrow">
-      <span class="lbl">Dokumenta tips</span>
-      <input type="text" class="inp inp-flex">
-      <button class="icbtn" style="width:22px;height:20px;" title="Izvēlēties">
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-          <rect x="1.5" y="9" width="10" height="2.2" rx="0.4" fill="#c4d4ee"/>
-          <polygon points="6.5,1.5 9.4,6 7.5,6 7.5,8.2 5.5,8.2 5.5,6 3.6,6" fill="#c4d4ee"/>
-        </svg>
-      </button>
-      <button class="btn-off">Apskatīt iesniegumu</button>
+    <!-- ALIGNED ROWS BLOCK -->
+    <div style="display:flex; flex-direction:column; gap:3px; margin-bottom:4px;">
+
+      <!-- ROW 1: Dokumenta tips -->
+      <div style="display:flex; align-items:center; gap:3px;">
+        <span class="lbl" style="width:160px; flex-shrink:0;">Dokumenta tips</span>
+        <input type="text" class="inp inp-flex">
+        <button class="icbtn" style="width:22px;height:20px;" title="Izvēlēties">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+            <rect x="1.5" y="9" width="10" height="2.2" rx="0.4" fill="#c4d4ee"/>
+            <polygon points="6.5,1.5 9.4,6 7.5,6 7.5,8.2 5.5,8.2 5.5,6 3.6,6" fill="#c4d4ee"/>
+          </svg>
+        </button>
+        <button class="btn-off" style="width:148px;">Apskatīt iesniegumu</button>
+      </div>
+
+      <!-- ROW 2: Nosūtītā dokumenta kods -->
+      <div style="display:flex; align-items:center; gap:3px;">
+        <span class="lbl" style="width:160px; flex-shrink:0;">Nosūtītā dokumenta kods</span>
+        <input type="text" class="inp inp-flex">
+        <button class="btn-on" style="width:148px;">Apskatīt lēmumu</button>
+      </div>
+
+      <!-- ROW 3: Apskatīties paziņojumu (moved here) -->
+      <div style="display:flex; align-items:center; gap:3px;">
+        <span class="lbl" style="width:160px; flex-shrink:0;"></span>
+        <div class="inp-flex"></div>
+        <button class="btn-on" style="width:148px;">Apskatīties paziņojumu</button>
+      </div>
+
     </div>
 
     <!-- TEXTAREA -->
@@ -369,8 +389,8 @@ table.g td.td-ic {
 
 <script>
 (function () {
-  /* Column widths */
-  const widths = [97, 79, 134, 28, 88, 102, 106, 79, null];
+  /* Column widths — 10 cols now */
+  const widths = [88, 72, 120, 26, 82, 96, 100, 72, 90, null];
   const cols = document.querySelectorAll('table.g colgroup col');
   widths.forEach((w, i) => { if (cols[i] && w) cols[i].style.width = w + 'px'; });
 
@@ -381,13 +401,13 @@ table.g td.td-ic {
     '<polygon points="6.5,1.5 9.4,6 7.5,6 7.5,8.2 5.5,8.2 5.5,6 3.6,6" fill="#c4d4ee"/>' +
     '</svg>';
 
-  /* Build rows */
+  /* Build rows — 9 rows (was 11, minus 2) */
   const gb = document.getElementById('gb');
-  for (let r = 0; r < 11; r++) {
+  for (let r = 0; r < 9; r++) {
     const tr = document.createElement('tr');
     if (r === 0) tr.className = 'row-sel';
     let html = '';
-    for (let c = 0; c < 9; c++) {
+    for (let c = 0; c < 10; c++) {
       if (c === 3) {
         html += '<td class="td-ic"><button class="icbtn" style="width:22px;height:18px;" title="Lejupielādēt">' + icon + '</button></td>';
       } else {
