@@ -124,9 +124,8 @@ table.g td.td-ic {
 
 /* ICON BUTTON */
 .icbtn {
-  background: linear-gradient(180deg, #46568e 0%, #2e3f6e 100%);
-  border: 1px solid;
-  border-color: #6070a8 #182040 #182040 #6070a8;
+  background: #cad6d4;
+  border: 1px solid #9ab8b6;
   border-radius: 2px;
   cursor: pointer;
   display: inline-flex;
@@ -134,13 +133,10 @@ table.g td.td-ic {
   justify-content: center;
   padding: 0;
   flex-shrink: 0;
-  transition: opacity 0.1s;
+  transition: background 0.1s;
 }
-.icbtn:hover { opacity: 0.85; }
-.icbtn:active {
-  border-color: #182040 #6070a8 #6070a8 #182040;
-  opacity: 1;
-}
+.icbtn:hover { background: #b8c8c6; }
+.icbtn:active { background: #a8b8b6; border-color: #7a9896; }
 
 /* SCROLLBAR */
 .vsb {
@@ -228,6 +224,32 @@ table.g td.td-ic {
 /* DOC TYPE ROW */
 .dtrow { display: flex; align-items: center; gap: 3px; margin-bottom: 4px; width: 100%; }
 
+/* DROPDOWN ARROW BUTTON — attached to right of input */
+.dd-btn {
+  height: 22px;
+  width: 20px;
+  background: #c8d4d2;
+  border: 1px solid #9ab8b6;
+  border-radius: 0 3px 3px 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  color: #4a6a68;
+  flex-shrink: 0;
+  padding: 0;
+  transition: background 0.1s;
+}
+.dd-btn:hover { background: #b8c8c6; color: #2a4a48; }
+.dd-btn:active { background: #a8b8b6; }
+
+/* input paired with dd-btn */
+.inp-dd {
+  border-radius: 3px 0 0 3px;
+  border-right: none;
+}
+
 /* BUTTONS */
 .btn-on {
   height: 22px;
@@ -291,7 +313,7 @@ table.g td.td-ic {
       <div class="grid-area">
         <table class="g" id="main-table">
           <colgroup>
-            <col><col><col><col><col><col><col><col><col><col>
+            <col><col><col><col><col><col><col><col><col>
           </colgroup>
           <thead>
             <tr>
@@ -303,7 +325,6 @@ table.g td.td-ic {
               <th>Saņemtā dok.<br>reģ. Nr. SAIS</th>
               <th>Nosūtāmā dok.<br>reģ. Nr. SAIS</th>
               <th>Ziņojuma<br>statuss</th>
-              <th>Apstiprināts<br>e-pasts</th>
               <th>Lietotājs</th>
             </tr>
           </thead>
@@ -335,7 +356,10 @@ table.g td.td-ic {
       <span class="fs-legend">Organizācija, kurai nosūtīts ziņojums</span>
       <div class="frow">
         <span class="lbl">NMR kods</span>
-        <input type="text" readonly class="inp" style="width:103px">
+        <div style="display:flex;align-items:center;gap:0;width:103px;flex-shrink:0;">
+          <input type="text" readonly class="inp" style="flex:1;min-width:0;border-radius:3px 0 0 3px;border-right:none;">
+          <button class="dd-btn" title="Izvēlēties">&#9660;</button>
+        </div>
         <span class="lbl">Saņēmējorganizācija</span>
         <input type="text" class="inp inp-flex">
       </div>
@@ -344,24 +368,28 @@ table.g td.td-ic {
     <!-- ALIGNED ROWS BLOCK -->
     <div style="display:flex; flex-direction:column; gap:3px; margin-bottom:4px;">
 
-      <!-- ROW 1: Dokumenta tips -->
-      <div style="display:flex; align-items:center; gap:3px;">
-        <span class="lbl" style="width:160px; flex-shrink:0;">Dokumenta tips</span>
+      <!-- ROW 1: Saņemtā dokumenta tips -->      <div style="display:flex; align-items:center; gap:3px;">
+        <span class="lbl" style="width:175px; flex-shrink:0;">Saņemtā dokumenta tips</span>
         <input type="text" class="inp inp-flex">
         <button class="icbtn" style="width:22px;height:20px;" title="Izvēlēties">
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-            <rect x="1.5" y="9" width="10" height="2.2" rx="0.4" fill="#c4d4ee"/>
-            <polygon points="6.5,1.5 9.4,6 7.5,6 7.5,8.2 5.5,8.2 5.5,6 3.6,6" fill="#c4d4ee"/>
+            <rect x="1.5" y="9" width="10" height="2.2" rx="0.4" fill="#6a9a98"/>
+            <polygon points="6.5,1.5 9.4,6 7.5,6 7.5,8.2 5.5,8.2 5.5,6 3.6,6" fill="#6a9a98"/>
           </svg>
         </button>
         <button class="btn-off" style="width:148px;">Apskatīt iesniegumu</button>
       </div>
 
-      <!-- ROW 2: Nosūtītā dokumenta kods -->
+
+
+      <!-- ROW 1b: Nosūtāmā dokumenta tips — dropdown -->
       <div style="display:flex; align-items:center; gap:3px;">
-        <span class="lbl" style="width:160px; flex-shrink:0;">Nosūtītā dokumenta kods</span>
-        <input type="text" class="inp inp-flex">
-        <button class="btn-on" style="width:148px;">Apskatīt lēmumu</button>
+        <span class="lbl" style="width:175px; flex-shrink:0;">Nosūtāmā dokumenta tips</span>
+        <div style="display:flex;align-items:center;gap:0;flex:1;min-width:0;">
+          <input type="text" readonly class="inp" style="flex:1;min-width:0;border-radius:3px 0 0 3px;border-right:none;">
+          <button class="dd-btn">&#9660;</button>
+        </div>
+        <div style="width:148px;flex-shrink:0;"></div>
       </div>
 
       <!-- ROW 3: Apskatīties paziņojumu (moved here) -->
@@ -375,7 +403,7 @@ table.g td.td-ic {
 
     <!-- TEXTAREA -->
     <div class="sec-lbl">Ziņojuma teksts</div>
-    <textarea readonly class="ta" placeholder=""></textarea>
+    <textarea readonly class="ta" placeholder="Ievadiet ziņojuma tekstu..."></textarea>
 
     <!-- BOTTOM BUTTONS -->
     <div class="btns">
@@ -389,27 +417,32 @@ table.g td.td-ic {
 
 <script>
 (function () {
-  /* Column widths — 10 cols now */
-  const widths = [88, 72, 120, 26, 82, 96, 100, 72, 90, null];
+  /* Column widths — 9 cols */
+  const widths = [97, 79, 134, 28, 88, 102, 106, 79, null];
   const cols = document.querySelectorAll('table.g colgroup col');
   widths.forEach((w, i) => { if (cols[i] && w) cols[i].style.width = w + 'px'; });
 
-  /* Icon SVG */
   const icon =
     '<svg width="11" height="11" viewBox="0 0 13 13" fill="none">' +
-    '<rect x="1.5" y="9" width="10" height="2.2" rx="0.4" fill="#c4d4ee"/>' +
-    '<polygon points="6.5,1.5 9.4,6 7.5,6 7.5,8.2 5.5,8.2 5.5,6 3.6,6" fill="#c4d4ee"/>' +
+    '<rect x="1.5" y="9" width="10" height="2.2" rx="0.4" fill="#6a9a98"/>' +
+    '<polygon points="6.5,1.5 9.4,6 7.5,6 7.5,8.2 5.5,8.2 5.5,6 3.6,6" fill="#6a9a98"/>' +
     '</svg>';
 
-  /* Build rows — 9 rows (was 11, minus 2) */
+  const ddBtn = '<button class="dd-btn" style="border-radius:2px;height:16px;width:16px;font-size:7px;flex-shrink:0;margin-left:auto;">&#9660;</button>';
+  const ddCell = '<td style="padding:0 3px;"><div style="display:flex;align-items:center;height:100%;">' + ddBtn + '</div></td>';
+
   const gb = document.getElementById('gb');
   for (let r = 0; r < 9; r++) {
     const tr = document.createElement('tr');
     if (r === 0) tr.className = 'row-sel';
     let html = '';
-    for (let c = 0; c < 10; c++) {
+    for (let c = 0; c < 9; c++) {
       if (c === 3) {
-        html += '<td class="td-ic"><button class="icbtn" style="width:22px;height:18px;" title="Lejupielādēt">' + icon + '</button></td>';
+        // download icon col
+        html += '<td class="td-ic"><button class="icbtn" style="width:22px;height:18px;">' + icon + '</button></td>';
+      } else if (c === 1 || c === 7) {
+        // Nosūtīšanas veids (1) and Ziņojuma statuss (7) — dropdown in every cell
+        html += '<td style="padding:0 3px;"><div style="display:flex;align-items:center;height:100%;">' + ddBtn + '</div></td>';
       } else {
         html += '<td></td>';
       }
