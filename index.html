@@ -392,18 +392,18 @@ table.g td.td-ic {
         <button class="btn-on" style="width:148px;">Apskatīt lēmumu</button>
       </div>
 
-      <!-- ROW 3: Apskatīties paziņojumu (moved here) -->
+      <!-- ROW 3: Apskatīties paziņojumu -->
       <div style="display:flex; align-items:center; gap:3px;">
         <span class="lbl" style="width:160px; flex-shrink:0;"></span>
         <div class="inp-flex"></div>
-        <button class="btn-on" style="width:148px;">Apskatīties paziņojumu</button>
+        <button class="btn-on" style="width:148px;">Apskatīt paziņojumu</button>
       </div>
 
     </div>
 
     <!-- TEXTAREA -->
     <div class="sec-lbl">Ziņojuma teksts</div>
-    <textarea readonly class="ta" placeholder="Ievadiet ziņojuma tekstu..."></textarea>
+    <textarea readonly class="ta"></textarea>
 
     <!-- BOTTOM BUTTONS -->
     <div class="btns">
@@ -439,7 +439,6 @@ table.g td.td-ic {
       if (c === 3) {
         html += '<td class="td-ic"><button class="icbtn" style="width:22px;height:18px;">' + icon + '</button></td>';
       } else if (c === 1 || c === 7) {
-        // dropdown on RIGHT side of cell, full height
         html += '<td style="padding:0;overflow:hidden;"><div style="display:flex;align-items:stretch;height:100%;min-height:22px;"><div style="flex:1;"></div>' + ddBtn + '</div></td>';
       } else {
         html += '<td></td>';
